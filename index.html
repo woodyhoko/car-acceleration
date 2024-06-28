@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Acceleration Times Chart (0-60 mph)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .chart-container {
+            width: 80%;
+            max-width: 90vw;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="carChart"></canvas>
+    </div>
+
+    <script>
+        const data = [
+            { year: 2000, 'Tesla Model S': null, 'Porsche 911': 4.6, 'Ford Mustang GT': 5.4, 'Toyota Camry': 8.2, 'BMW M3': 4.8, 'Chevrolet Corvette': 4.5, 'Honda Civic Si': 7.6, 'Mazda MX-5': 7.5, 'Subaru WRX STI': null },
+            { year: 2001, 'Tesla Model S': null, 'Porsche 911': 4.5, 'Ford Mustang GT': 5.3, 'Toyota Camry': 8.1, 'BMW M3': 4.7, 'Chevrolet Corvette': 4.4, 'Honda Civic Si': 7.5, 'Mazda MX-5': 7.4, 'Subaru WRX STI': null },
+            { year: 2002, 'Tesla Model S': null, 'Porsche 911': 4.5, 'Ford Mustang GT': 5.3, 'Toyota Camry': 8.0, 'BMW M3': 4.8, 'Chevrolet Corvette': 4.3, 'Honda Civic Si': 7.4, 'Mazda MX-5': 7.3, 'Subaru WRX STI': 5.0 },
+            { year: 2003, 'Tesla Model S': null, 'Porsche 911': 4.4, 'Ford Mustang GT': 5.2, 'Toyota Camry': 7.9, 'BMW M3': 4.7, 'Chevrolet Corvette': 4.2, 'Honda Civic Si': 7.3, 'Mazda MX-5': 7.2, 'Subaru WRX STI': 4.9 },
+            { year: 2004, 'Tesla Model S': null, 'Porsche 911': 4.3, 'Ford Mustang GT': 5.1, 'Toyota Camry': 7.8, 'BMW M3': 4.6, 'Chevrolet Corvette': 4.1, 'Honda Civic Si': 7.2, 'Mazda MX-5': 7.1, 'Subaru WRX STI': 4.8 },
+            { year: 2005, 'Tesla Model S': null, 'Porsche 911': 4.2, 'Ford Mustang GT': 5.1, 'Toyota Camry': 7.8, 'BMW M3': 4.5, 'Chevrolet Corvette': 4.1, 'Honda Civic Si': 7.1, 'Mazda MX-5': 7.0, 'Subaru WRX STI': 4.7 },
+            { year: 2006, 'Tesla Model S': null, 'Porsche 911': 4.1, 'Ford Mustang GT': 5.0, 'Toyota Camry': 7.7, 'BMW M3': 4.4, 'Chevrolet Corvette': 4.0, 'Honda Civic Si': 7.0, 'Mazda MX-5': 6.9, 'Subaru WRX STI': 4.6 },
+            { year: 2007, 'Tesla Model S': null, 'Porsche 911': 4.1, 'Ford Mustang GT': 4.9, 'Toyota Camry': 7.6, 'BMW M3': 4.3, 'Chevrolet Corvette': 3.9, 'Honda Civic Si': 6.9, 'Mazda MX-5': 6.8, 'Subaru WRX STI': 4.5 },
+            { year: 2008, 'Tesla Model S': null, 'Porsche 911': 4.0, 'Ford Mustang GT': 4.8, 'Toyota Camry': 7.5, 'BMW M3': 4.2, 'Chevrolet Corvette': 3.9, 'Honda Civic Si': 6.8, 'Mazda MX-5': 6.7, 'Subaru WRX STI': 4.4 },
+            { year: 2009, 'Tesla Model S': null, 'Porsche 911': 4.0, 'Ford Mustang GT': 4.7, 'Toyota Camry': 7.4, 'BMW M3': 4.1, 'Chevrolet Corvette': 3.8, 'Honda Civic Si': 6.7, 'Mazda MX-5': 6.6, 'Subaru WRX STI': 4.3 },
+            { year: 2010, 'Tesla Model S': null, 'Porsche 911': 3.9, 'Ford Mustang GT': 4.6, 'Toyota Camry': 7.3, 'BMW M3': 4.1, 'Chevrolet Corvette': 3.7, 'Honda Civic Si': 6.6, 'Mazda MX-5': 6.5, 'Subaru WRX STI': 4.2 },
+            { year: 2011, 'Tesla Model S': null, 'Porsche 911': 3.8, 'Ford Mustang GT': 4.5, 'Toyota Camry': 7.2, 'BMW M3': 4.0, 'Chevrolet Corvette': 3.7, 'Honda Civic Si': 6.5, 'Mazda MX-5': 6.4, 'Subaru WRX STI': 4.1 },
+            { year: 2012, 'Tesla Model S': 4.0, 'Porsche 911': 3.7, 'Ford Mustang GT': 4.4, 'Toyota Camry': 7.1, 'BMW M3': 3.9, 'Chevrolet Corvette': 3.6, 'Honda Civic Si': 6.4, 'Mazda MX-5': 6.3, 'Subaru WRX STI': 4.0 },
+            { year: 2013, 'Tesla Model S': 3.9, 'Porsche 911': 3.7, 'Ford Mustang GT': 4.3, 'Toyota Camry': 7.0, 'BMW M3': 3.9, 'Chevrolet Corvette': 3.5, 'Honda Civic Si': 6.3, 'Mazda MX-5': 6.2, 'Subaru WRX STI': 4.0 },
+            { year: 2014, 'Tesla Model S': 3.7, 'Porsche 911': 3.6, 'Ford Mustang GT': 4.2, 'Toyota Camry': 6.9, 'BMW M3': 3.8, 'Chevrolet Corvette': 3.4, 'Honda Civic Si': 6.2, 'Mazda MX-5': 6.1, 'Subaru WRX STI': 3.9 },
+            { year: 2015, 'Tesla Model S': 3.1, 'Porsche 911': 3.5, 'Ford Mustang GT': 4.1, 'Toyota Camry': 6.8, 'BMW M3': 3.8, 'Chevrolet Corvette': 3.3, 'Honda Civic Si': 6.1, 'Mazda MX-5': 6.0, 'Subaru WRX STI': 3.8 },
+            { year: 2016, 'Tesla Model S': 2.8, 'Porsche 911': 3.4, 'Ford Mustang GT': 4.0, 'Toyota Camry': 6.7, 'BMW M3': 3.7, 'Chevrolet Corvette': 3.2, 'Honda Civic Si': 6.0, 'Mazda MX-5': 5.9, 'Subaru WRX STI': 3.7 },
+            { year: 2017, 'Tesla Model S': 2.5, 'Porsche 911': 3.3, 'Ford Mustang GT': 3.9, 'Toyota Camry': 6.6, 'BMW M3': 3.7, 'Chevrolet Corvette': 3.1, 'Honda Civic Si': 5.9, 'Mazda MX-5': 5.8, 'Subaru WRX STI': 3.6 },
+            { year: 2018, 'Tesla Model S': 2.4, 'Porsche 911': 3.2, 'Ford Mustang GT': 3.8, 'Toyota Camry': 6.5, 'BMW M3': 3.6, 'Chevrolet Corvette': 3.0, 'Honda Civic Si': 5.8, 'Mazda MX-5': 5.7, 'Subaru WRX STI': 3.5 },
+            { year: 2019, 'Tesla Model S': 2.4, 'Porsche 911': 3.1, 'Ford Mustang GT': 3.7, 'Toyota Camry': 6.4, 'BMW M3': 3.5, 'Chevrolet Corvette': 2.9, 'Honda Civic Si': 5.7, 'Mazda MX-5': 5.6, 'Subaru WRX STI': 3.4 },
+            { year: 2020, 'Tesla Model S': 2.3, 'Porsche 911': 3.0, 'Ford Mustang GT': 3.6, 'Toyota Camry': 6.3, 'BMW M3': 3.4, 'Chevrolet Corvette': 2.8, 'Honda Civic Si': 5.6, 'Mazda MX-5': 5.5, 'Subaru WRX STI': 3.3 },
+            { year: 2021, 'Tesla Model S': 2.1, 'Porsche 911': 2.9, 'Ford Mustang GT': 3.5, 'Toyota Camry': 6.2, 'BMW M3': 3.3, 'Chevrolet Corvette': 2.8, 'Honda Civic Si': 5.5, 'Mazda MX-5': 5.4, 'Subaru WRX STI': 3.2 },
+            { year: 2022, 'Tesla Model S': 1.99, 'Porsche 911': 2.8, 'Ford Mustang GT': 3.4, 'Toyota Camry': 6.1, 'BMW M3': 3.2, 'Chevrolet Corvette': 2.7, 'Honda Civic Si': 5.4, 'Mazda MX-5': 5.3, 'Subaru WRX STI': 3.1 },
+            { year: 2023, 'Tesla Model S': 1.98, 'Porsche 911': 2.7, 'Ford Mustang GT': 3.3, 'Toyota Camry': 6.0, 'BMW M3': 3.1, 'Chevrolet Corvette': 2.6, 'Honda Civic Si': 5.3, 'Mazda MX-5': 5.2, 'Subaru WRX STI': 3.0 },
+        ];
+
+        const ctx = document.getElementById('carChart').getContext('2d');
+        const carModels = Object.keys(data[0]).filter(key => key !== 'year');
+        const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+        ];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.year),
+                datasets: carModels.map((model, index) => ({
+                    label: model,
+                    data: data.map(d => d[model]),
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length] + '20',
+                    fill: false,
+                    tension: 0.1
+                }))
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Car Acceleration Times (0-60 mph) Over the Years',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: '0-60 mph Time (seconds)'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
